@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Adequately Guiding Katydid ChatRoom</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <div class="tab-container">
+      <h1 class="logo">Adequately Guiding Katydid ChatRoom</h1>
+      
+      <div class="tabs">
+        <button class="tab active" data-tab="chat">Chat</button>
+        <button class="tab" data-tab="admin">Admin</button>
+      </div>
+
+      <div class="tab-content active" id="chat">
+        <form class="form" id="form">
+          <input class="input" type="text" placeholder="Name" id="myname" />
+          <input class="input" type="text" placeholder="Message" id="message" />
+          <button class="button">Send Message</button>
+        </form>
+        <div class="messageArea" id="messageArea"></div>
+      </div>
+
+      <div class="tab-content" id="admin">
+        <form class="form" id="adminForm">
+          <input class="input" type="password" placeholder="Enter Admin Password" id="adminPassword" />
+          <button class="button">View Database</button>
+        </form>
+        <div class="messageArea" id="adminMessages"></div>
+      </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      let socket = io("https://adequately-guiding-katydid.ngrok-free.app", {
+        transports: ["websocket"],
+        reconnection: true,
+        reconnectionAttempts: 5,
+        reconnectionDelay: 1000,
+      });
+
+      // Debug WebSocket connection
+      socket.on("connect", () => {
+        console.log("✅ Connected to WebSocket server");
+      });
+
+      socket.on("disconnect", () => {
+        console.log("⚠ WebSocket disconnected");
+      });
+
+      socket.on("connect_error", (err) => {
+        console.error("❌ Connection Error:", err);
+      });
+
+      socket.on("reconnect", () => {
+        console.log("🔄 Reconnected to WebSocket server");
+      });
+
+      let form = document.getElementById("form");
+      let myname = document.getElementById("myname");
+      let message = document.getElementById("message");
+      let messageArea = document.getElementById("messageArea");
+
+      // Load existing messages from the database when connected
+      socket.on("load messages", (messages) => {
+        messages.forEach((msg) => {
+          let messageContent = document.createElement("p");
+          messageContent.classList.add("message");
+          messageContent.innerHTML = 
+            `<span class="username">${msg.user}:</span> ${msg.message} 
+            <span class="timestamp">(${msg.timestamp})</span>`;
+
+          messageArea.appendChild(messageContent);
+        });
+      });
+
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        let timestamp = new Date().toLocaleString();
+
+        // Regular message handling
+        if (message.value) {
+          let chatData = {
+            user: myname.value,
+            message: message.value,
+            timestamp: timestamp,
+          };
+
+          // Emit the chatData to the server
+          socket.emit("send message", chatData);
+
+          message.value = "";
+        }
+      });
+      // Listen for incoming messages from the server
+      socket.on("send message", (chatData) => {
+        let { user, message, timestamp } = chatData;
+        let messageContent = document.createElement("p");
+        messageContent.classList.add("message");
+        messageContent.innerHTML = 
+          `<span class="username">${user}:</span> ${message} 
+          <span class="timestamp">(${timestamp})</span>`;
+        messageArea.appendChild(messageContent);
+      });
+
+      // Add tab switching functionality
+      document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          // Remove active class from all tabs and contents
+          document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+          document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+          
+          // Add active class to clicked tab and corresponding content
+          tab.classList.add('active');
+          document.getElementById(tab.dataset.tab).classList.add('active');
+        });
+      });
+
+      // Modify your admin handling code
+      const adminForm = document.getElementById('adminForm');
+      const adminPassword = document.getElementById('adminPassword');
+      const adminMessages = document.getElementById('adminMessages');
+
+      // Replace the existing admin form event listener with:
+      adminForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        console.log("Admin form submitted with password:", adminPassword.value); // Debug log
+        
+        if (adminPassword.value === 'Admin') {
+            socket.emit('admin request', adminPassword.value);
+            console.log("Admin request emitted"); // Debug log
+        } else {
+            console.log("Invalid password"); // Debug log
+        }
+        adminPassword.value = '';
+      });
+
+      // Replace the existing admin data event listener with:
+      socket.on("admin data", (data) => {
+        // Clear existing admin messages
+        adminMessages.innerHTML = "<h3>Database Contents:</h3>";
+        
+        // Display all database records
+        data.forEach((record) => {
+            let messageContent = document.createElement("p");
+            messageContent.classList.add("message", "admin-message");
+            messageContent.innerHTML = `
+                <strong>ID: ${record.id}</strong><br>
+                <span class="username">${record.user}:</span> ${record.message}
+                <span class="timestamp">(${record.timestamp})</span>
+            `;
+            adminMessages.appendChild(messageContent);
+        });
+      });
+    </script>
+  </body>
+</html>

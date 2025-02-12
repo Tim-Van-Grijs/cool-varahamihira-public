@@ -1,0 +1,171 @@
+.tab-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.tabs {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.tab {
+    flex: 1;
+    padding: 15px;
+    text-align: center;
+    background: #f0f0f0;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.3s;
+}
+
+.tab.active {
+    background: #007bff;
+    color: white;
+}
+
+.tab-content {
+    display: none;
+    padding: 20px;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Keep your existing styles but remove .admin-area styles */
+.container {
+    display: flex;
+    flex-direction: column;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Add these styles to your existing CSS */
+.admin-message {
+    background-color: #f5f5f5;
+    border-left: 3px solid #007bff;
+    margin: 10px 0;
+    padding: 15px;
+    border-radius: 4px;
+}
+
+.messageArea {
+    max-height: 70vh;
+    overflow-y: auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin-top: 20px;
+}
+
+#adminMessages {
+    width: 100%;
+}
+
+/* Chat message styles */
+.message {
+    background-color: #e9ecef;
+    padding: 12px 15px;
+    margin: 8px 0;
+    border-radius: 10px;
+    max-width: 80%;
+    word-wrap: break-word;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    animation: fadeIn 0.3s ease-in;
+    display: flex;
+    flex-direction: column;
+}
+
+.username {
+    color: #007bff;
+    font-weight: bold;
+    margin-bottom: 4px;
+    display: block;
+}
+
+.timestamp {
+    font-size: 0.75em;
+    color: #6c757d;
+    margin-top: 8px;
+    display: block;
+    align-self: flex-start;
+}
+
+/* Message animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* MessageArea scrollbar styling */
+.messageArea::-webkit-scrollbar {
+    width: 8px;
+}
+
+.messageArea::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.messageArea::-webkit-scrollbar-thumb {
+    background: #007bff;
+    border-radius: 4px;
+}
+
+.messageArea::-webkit-scrollbar-thumb:hover {
+    background: #0056b3;
+}
+
+/* Form and input styles */
+.form {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.input {
+    padding: 10px;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    flex: 1;
+    min-width: 200px;
+    transition: border-color 0.2s;
+}
+
+.input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+}
+
+.button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.button:hover {
+    background-color: #0056b3;
+}
+
+/* Logo styling */
+.logo {
+    color: #2c3e50;
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 24px;
+}
